@@ -1,0 +1,6 @@
+{
+  "recommendations": [
+    "ms-vsliveshare.vsliveshare",
+    "ms-vscode-remote.remote-wsl"
+  ]
+}
