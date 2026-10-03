@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
-import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
 import { createKnowledgeController } from './controllers/create-knowledge.controller.js';
+import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
 import { getNewKnowledgeController } from './controllers/get-new-knowledge.controller.js';
 
 export interface Variables {

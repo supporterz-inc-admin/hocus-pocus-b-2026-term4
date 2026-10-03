@@ -1,5 +1,4 @@
-import { glob, readFile } from 'node:fs/promises';
-import { writeFile } from 'node:fs/promises';
+import { glob, readFile, writeFile } from 'node:fs/promises';
 import type { Knowledge } from './knowledge.model.js';
 
 async function getAll(): Promise<Knowledge[]> {
