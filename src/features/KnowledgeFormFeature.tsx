@@ -28,15 +28,17 @@ export function KnowledgeFormFeature({ title, content = '', knowledgeId, status 
           <button class="p-2xs text-white bg-blue-500 rounded-4" name="status" type="submit" value="published">
             投稿
           </button>
-          <button
-            class="p-2xs border border-gray-300 rounded-4"
-            formnovalidate
-            name="status"
-            type="submit"
-            value="draft"
-          >
-            下書き保存
-          </button>
+          {(knowledgeId == null || status === 'draft') && (
+            <button
+              class="p-2xs border border-gray-300 rounded-4"
+              formnovalidate
+              name="status"
+              type="submit"
+              value="draft"
+            >
+              下書き保存
+            </button>
+          )}
         </div>
       </form>
     </Layout>
