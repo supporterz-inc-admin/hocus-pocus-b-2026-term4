@@ -4,7 +4,7 @@ import { KnowledgeRepository } from '../models/knowledge.repository.js';
 export async function createKnowledgeController(content: string, authorId: string) {
   const knowledge = Knowledge.create(content, authorId);
 
-  await KnowledgeRepository.insert(knowledge);
+  await KnowledgeRepository.upsert(knowledge);
 
   return knowledge;
 }

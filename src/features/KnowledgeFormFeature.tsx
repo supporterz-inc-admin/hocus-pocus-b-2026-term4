@@ -2,14 +2,15 @@ import { Layout } from './Layout.js';
 
 interface Props {
   title: string;
-  action: string;
   content?: string;
+  knowledgeId?: string;
 }
 
-export function KnowledgeFormFeature({ title, action, content = '' }: Props) {
+export function KnowledgeFormFeature({ title, content = '', knowledgeId }: Props) {
   return (
     <Layout title={title}>
-      <form action={action} method="post">
+      <form action="/knowledges" method="post">
+        {knowledgeId != null && <input name="id" type="hidden" value={knowledgeId} />}
         <textarea class="w-full h-64 border" name="content" required>
           {content}
         </textarea>

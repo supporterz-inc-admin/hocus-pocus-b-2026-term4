@@ -1,7 +1,8 @@
 import { Hono } from 'hono';
 import { createKnowledgeController } from './controllers/create-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
-import { getNewKnowledgeController } from './controllers/get-new-knowledge.controller.js';
+import { getKnowledgeFormController } from './controllers/get-knowledge-form.controller.js';
+import { updateKnowledgeController } from './controllers/update-knowledge.controller.js';
 
 export interface Variables {
   /**
@@ -24,16 +25,24 @@ router.get('/', (ctx) => {
   console.log(`Signed-in : ${userName} (${userId})`);
 
   // MEMO: Controller は Context を直接受け取らず、必要な情報のみを引数に受け取る
-  return ctx.html(getAllKnowledgesController(userName));
+  return ctx.html(getAllKnowledgesController(userId, userName));
 });
 
-router.get('/knowledges/new', (ctx) => ctx.html(getNewKnowledgeController()));
+// MEMO: `?id=` があれば編集、なければ作成のフォームを返す
+router.get('/knowledges/form', (ctx) => ctx.html(getKnowledgeFormController(ctx.get('userId'), ctx.req.query('id'))));
 
+// MEMO: Form の hidden フィールド `id` があれば更新、なければ作成として扱う
 router.post('/knowledges', async (ctx) => {
-  const { content } = await ctx.req.parseBody();
+  const { content, id } = await ctx.req.parseBody();
   if (typeof content !== 'string') return ctx.text('Bad Request', 400);
 
-  await createKnowledgeController(content, ctx.get('userId'));
+  const userId = ctx.get('userId');
+
+  if (typeof id === 'string') {
+    await updateKnowledgeController(id, content, userId);
+  } else {
+    await createKnowledgeController(content, userId);
+  }
 
   return ctx.redirect('/');
 });
