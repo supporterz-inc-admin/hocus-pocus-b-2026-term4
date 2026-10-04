@@ -1,4 +1,4 @@
-import { glob, readFile, writeFile } from 'node:fs/promises';
+import { glob, readFile, rm, writeFile } from 'node:fs/promises';
 import type { Knowledge } from './knowledge.model.js';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -31,6 +31,14 @@ async function upsert(knowledge: Knowledge): Promise<void> {
   await writeFile(toFilePath(knowledge.knowledgeId), JSON.stringify(knowledge), 'utf-8');
 }
 
+async function deleteByKnowledgeId(knowledgeId: string): Promise<void> {
+  if (!UUID_PATTERN.test(knowledgeId)) {
+    throw new Error('Invalid knowledge ID');
+  }
+
+  await rm(toFilePath(knowledgeId));
+}
+
 export const KnowledgeRepository = {
   getByKnowledgeId,
 
@@ -38,9 +46,7 @@ export const KnowledgeRepository = {
   getByAuthorId: (_: string): Promise<Knowledge[]> => undefined as any,
 
   getAll,
-
   upsert,
 
-  // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する
-  deleteByKnowledgeId: (_: string): Promise<void> => undefined as any,
+  deleteByKnowledgeId,
 };
