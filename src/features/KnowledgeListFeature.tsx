@@ -1,4 +1,5 @@
 import type { Knowledge } from '../models/knowledge.model.js';
+import { KnowledgeOwnerActions } from './KnowledgeOwnerActions.js';
 import { Layout } from './Layout.js';
 
 interface Props {
@@ -24,23 +25,20 @@ export function KnowledgeListFeature({ userId, userName, knowledges }: Props) {
       {knowledges.length ? (
         <ul class="flex flex-col gap-s p-s">
           {knowledges.map((knowledge) => (
-            <li class="p-s bg-gray-100 border border-gray-300 rounded-8" key={knowledge.knowledgeId}>
+            <li class="relative p-s bg-gray-100 border border-gray-300 rounded-8" key={knowledge.knowledgeId}>
               <div class="flex items-center justify-between">
                 <p class="text-gray-600 font-bold">{knowledge.authorId}</p>
                 {knowledge.authorId === userId && (
-                  <div class="flex items-center gap-s">
-                    <a class="text-blue-500" href={`/knowledges/form?id=${knowledge.knowledgeId}`}>
-                      編集
-                    </a>
-                    <form action={`/knowledges/${knowledge.knowledgeId}/delete`} method="post">
-                      <button class="text-red-500" type="submit">
-                        削除
-                      </button>
-                    </form>
+                  // MEMO: カード全体を覆うリンクより前面に出し、編集・削除を押せるようにする
+                  <div class="relative z-10">
+                    <KnowledgeOwnerActions knowledgeId={knowledge.knowledgeId} />
                   </div>
                 )}
               </div>
-              <p class="mt-2xs text-gray-900 line-clamp-3 whitespace-pre-wrap">{knowledge.content}</p>
+              {/* MEMO: `<form>` を `<a>` で囲めないため、疑似要素でカード全体をリンクの当たり判定にする */}
+              <a class="block mt-2xs after:absolute after:inset-0" href={`/knowledges/${knowledge.knowledgeId}`}>
+                <p class="text-gray-900 line-clamp-3 whitespace-pre-wrap">{knowledge.content}</p>
+              </a>
             </li>
           ))}
         </ul>
