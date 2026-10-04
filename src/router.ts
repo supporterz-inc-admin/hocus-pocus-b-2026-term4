@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { createKnowledgeController } from './controllers/create-knowledge.controller.js';
 import { deleteKnowledgeController } from './controllers/delete-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
+import { getDraftKnowledgesController } from './controllers/get-draft-knowledges.controller.js';
 import { getKnowledgeDetailController } from './controllers/get-knowledge-detail.controller.js';
 import { getKnowledgeFormController } from './controllers/get-knowledge-form.controller.js';
 import { updateKnowledgeController } from './controllers/update-knowledge.controller.js';
@@ -30,6 +31,10 @@ router.get('/', (ctx) => {
   return ctx.html(getAllKnowledgesController(userId, userName));
 });
 
+router.get('/knowledges/drafts', (ctx) =>
+  ctx.html(getDraftKnowledgesController(ctx.get('userId'), ctx.get('userName'))),
+);
+
 // MEMO: `?id=` があれば編集、なければ作成のフォームを返す
 router.get('/knowledges/form', (ctx) => ctx.html(getKnowledgeFormController(ctx.get('userId'), ctx.req.query('id'))));
 
@@ -40,18 +45,19 @@ router.get('/knowledges/:knowledgeId', (ctx) =>
 
 // MEMO: Form の hidden フィールド `id` があれば更新、なければ作成として扱う
 router.post('/knowledges', async (ctx) => {
-  const { content, id } = await ctx.req.parseBody();
+  const { content, id, status } = await ctx.req.parseBody();
   if (typeof content !== 'string') return ctx.text('Bad Request', 400);
+  if (status !== 'draft' && status !== 'published') return ctx.text('Bad Request', 400);
 
   const userId = ctx.get('userId');
 
   if (typeof id === 'string') {
-    await updateKnowledgeController(id, content, userId);
+    await updateKnowledgeController(id, content, userId, status);
   } else {
-    await createKnowledgeController(content, userId);
+    await createKnowledgeController(content, userId, status);
   }
 
-  return ctx.redirect('/');
+  return ctx.redirect(status === 'draft' ? '/knowledges/drafts' : '/');
 });
 
 router.post('/knowledges/:knowledgeId/delete', async (ctx) => {

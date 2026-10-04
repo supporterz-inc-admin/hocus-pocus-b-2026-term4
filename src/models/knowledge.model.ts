@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
+export type KnowledgeStatus = 'draft' | 'published';
+
 /**
  * ナレッジのドメインモデル
  */
@@ -28,6 +30,16 @@ export interface Knowledge {
   readonly content: string;
 
   /**
+   * ナレッジの公開状態
+   */
+  readonly status?: KnowledgeStatus;
+
+  /**
+   * ナレッジの公開日時 (UNIX タイムスタンプ)
+   */
+  readonly publishedAt?: number;
+
+  /**
    * ナレッジの作成日時 (UNIX タイムスタンプ)
    */
   readonly createdAt: number;
@@ -45,16 +57,23 @@ export interface Knowledge {
  * @param authorId ナレッジの作成者の ID
  * @returns 新規作成されたナレッジ
  */
-function create(content: Knowledge['content'], authorId: Knowledge['authorId']): Knowledge {
-  const now = Math.floor(Date.now() / 1000);
+function create(
+  content: Knowledge['content'],
+  authorId: Knowledge['authorId'],
+  status: KnowledgeStatus = 'published',
+): Knowledge {
+  const now = Date.now();
+  const nowInSeconds = now / 1000;
 
   return {
     __tag: 'Knowledge',
     knowledgeId: randomUUID(),
     content,
     authorId,
-    createdAt: now,
-    updatedAt: now,
+    status,
+    ...(status === 'published' ? { publishedAt: nowInSeconds } : {}),
+    createdAt: Math.floor(nowInSeconds),
+    updatedAt: Math.floor(nowInSeconds),
   };
 }
 
@@ -65,11 +84,22 @@ function create(content: Knowledge['content'], authorId: Knowledge['authorId']):
  * @param content 新しいナレッジの本文
  * @returns 更新されたナレッジ
  */
-function update(self: Knowledge, content: Knowledge['content']): Knowledge {
+function update(
+  self: Knowledge,
+  content: Knowledge['content'],
+  status: KnowledgeStatus = self.status ?? 'published',
+): Knowledge {
+  const now = Date.now();
+  const nowInSeconds = now / 1000;
+
   return {
     ...self,
     content,
-    updatedAt: Math.floor(Date.now() / 1000),
+    status,
+    ...(status === 'published'
+      ? { publishedAt: self.status !== 'draft' ? (self.publishedAt ?? self.createdAt) : nowInSeconds }
+      : {}),
+    updatedAt: Math.floor(nowInSeconds),
   };
 }
 
