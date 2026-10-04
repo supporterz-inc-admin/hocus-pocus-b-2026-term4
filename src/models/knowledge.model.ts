@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
+export type KnowledgeStatus = 'draft' | 'published';
+
 /**
  * ナレッジのドメインモデル
  */
@@ -28,6 +30,11 @@ export interface Knowledge {
   readonly content: string;
 
   /**
+   * ナレッジの公開状態
+   */
+  readonly status: KnowledgeStatus;
+
+  /**
    * ナレッジの作成日時 (UNIX タイムスタンプ)
    */
   readonly createdAt: number;
@@ -45,7 +52,11 @@ export interface Knowledge {
  * @param authorId ナレッジの作成者の ID
  * @returns 新規作成されたナレッジ
  */
-function create(content: Knowledge['content'], authorId: Knowledge['authorId']): Knowledge {
+function create(
+  content: Knowledge['content'],
+  authorId: Knowledge['authorId'],
+  status: KnowledgeStatus = 'published',
+): Knowledge {
   const now = Math.floor(Date.now() / 1000);
 
   return {
@@ -53,6 +64,7 @@ function create(content: Knowledge['content'], authorId: Knowledge['authorId']):
     knowledgeId: randomUUID(),
     content,
     authorId,
+    status,
     createdAt: now,
     updatedAt: now,
   };
@@ -65,10 +77,15 @@ function create(content: Knowledge['content'], authorId: Knowledge['authorId']):
  * @param content 新しいナレッジの本文
  * @returns 更新されたナレッジ
  */
-function update(self: Knowledge, content: Knowledge['content']): Knowledge {
+function update(
+  self: Knowledge,
+  content: Knowledge['content'],
+  status: KnowledgeStatus = self.status ?? 'published',
+): Knowledge {
   return {
     ...self,
     content,
+    status,
     updatedAt: Math.floor(Date.now() / 1000),
   };
 }

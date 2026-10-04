@@ -13,7 +13,14 @@ describe('Create Knowledge', () => {
 
     expect(knowledge.content).toBe(content);
     expect(knowledge.authorId).toBe(authorId);
+    expect(knowledge.status).toBe('published');
     expect(knowledge.createdAt).toEqual(knowledge.updatedAt);
+  });
+
+  it('下書きとして作成できる', () => {
+    const knowledge = Knowledge.create('Draft content', 'test-author', 'draft');
+
+    expect(knowledge.status).toBe('draft');
   });
 });
 
@@ -31,7 +38,16 @@ describe('Update Knowledge', () => {
     expect(updated.knowledgeId).toBe(original.knowledgeId);
     expect(updated.content).toBe(content);
     expect(updated.authorId).toBe(original.authorId);
+    expect(updated.status).toBe('published');
     expect(updated.createdAt).toEqual(original.createdAt);
     expect(updated.updatedAt).toBeGreaterThan(original.updatedAt);
+  });
+
+  it('公開済みナレッジを下書きに更新できる', () => {
+    const original = Knowledge.create('Original content', 'test-author');
+    const updated = Knowledge.update(original, 'Draft content', 'draft');
+
+    expect(updated.status).toBe('draft');
+    expect(updated.knowledgeId).toBe(original.knowledgeId);
   });
 });

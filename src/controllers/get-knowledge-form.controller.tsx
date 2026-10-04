@@ -9,5 +9,12 @@ export async function getKnowledgeFormController(userId: string, knowledgeId?: s
 
   const knowledge = await getOwnKnowledge(knowledgeId, userId);
 
-  return <KnowledgeFormFeature content={knowledge.content} knowledgeId={knowledge.knowledgeId} title="ナレッジ編集" />;
+  return (
+    <KnowledgeFormFeature
+      content={knowledge.content}
+      knowledgeId={knowledge.knowledgeId}
+      status={knowledge.status ?? 'published'}
+      title="ナレッジ編集"
+    />
+  );
 }

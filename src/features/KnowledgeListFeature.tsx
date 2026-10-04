@@ -6,16 +6,22 @@ interface Props {
   userId: string;
   userName: string;
   knowledges: Knowledge[];
+  isDraftList?: boolean;
 }
 
-export function KnowledgeListFeature({ userId, userName, knowledges }: Props) {
+export function KnowledgeListFeature({ userId, userName, knowledges, isDraftList = false }: Props) {
   return (
-    <Layout title="ナレッジ一覧">
+    <Layout title={isDraftList ? '下書き一覧' : 'ナレッジ一覧'}>
       <header class="flex items-center justify-between p-s border-b border-gray-300">
         <h1 class="font-bold">Hocus Pocus</h1>
-        <a class="p-2xs text-white bg-blue-500 rounded-4" href="/knowledges/form">
-          ナレッジを書く
-        </a>
+        <div class="flex items-center gap-s">
+          <a class="text-blue-500" href={isDraftList ? '/' : '/knowledges/drafts'}>
+            {isDraftList ? '公開一覧' : '下書き一覧'}
+          </a>
+          <a class="p-2xs text-white bg-blue-500 rounded-4" href="/knowledges/form">
+            ナレッジを書く
+          </a>
+        </div>
       </header>
 
       <p class="p-s text-gray-600">
@@ -27,7 +33,12 @@ export function KnowledgeListFeature({ userId, userName, knowledges }: Props) {
           {knowledges.map((knowledge) => (
             <li class="relative p-s bg-gray-100 border border-gray-300 rounded-8" key={knowledge.knowledgeId}>
               <div class="flex items-center justify-between">
-                <p class="text-gray-600 font-bold">{knowledge.authorId}</p>
+                <div class="flex items-center gap-2xs">
+                  <p class="text-gray-600 font-bold">{knowledge.authorId}</p>
+                  {knowledge.status === 'draft' && (
+                    <span class="text-xs text-gray-600 border border-gray-300 rounded-4 px-2xs">下書き</span>
+                  )}
+                </div>
                 {knowledge.authorId === userId && (
                   // MEMO: カード全体を覆うリンクより前面に出し、編集・削除を押せるようにする
                   <div class="relative z-10">
@@ -43,7 +54,7 @@ export function KnowledgeListFeature({ userId, userName, knowledges }: Props) {
           ))}
         </ul>
       ) : (
-        <p class="p-s text-gray-500">投稿済みのナレッジは 0 件です</p>
+        <p class="p-s text-gray-500">{isDraftList ? '下書きはありません' : '投稿済みのナレッジは 0 件です'}</p>
       )}
     </Layout>
   );
