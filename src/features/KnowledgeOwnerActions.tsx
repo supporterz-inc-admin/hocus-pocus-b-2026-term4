@@ -1,3 +1,5 @@
+import { buttonStyles } from './button-styles.js';
+
 interface Props {
   knowledgeId: string;
 }
@@ -7,12 +9,12 @@ interface Props {
  */
 export function KnowledgeOwnerActions({ knowledgeId }: Props) {
   return (
-    <div class="flex items-center gap-s">
-      <a class="text-blue-500" href={`/knowledges/form?id=${knowledgeId}`}>
+    <div class="flex items-center gap-2xs">
+      <a class={buttonStyles.edit} href={`/knowledges/form?id=${knowledgeId}`}>
         編集
       </a>
       <form action={`/knowledges/${knowledgeId}/delete`} method="post">
-        <button class="text-red-500" type="submit">
+        <button class={buttonStyles.danger} type="submit">
           削除
         </button>
       </form>

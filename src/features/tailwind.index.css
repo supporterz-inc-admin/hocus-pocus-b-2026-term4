@@ -4,6 +4,7 @@
   --color-black:      #000000;
   --color-blue-100:   #E6EAF6;
   --color-blue-500:   #3F5FBE;
+  --color-blue-600:   #3350A3;
   --color-gray-100:   #F6F6F6;
   --color-gray-200:   #E9E9E9;
   --color-gray-300:   #CFCFCF;
@@ -21,14 +22,14 @@
   --color-yellow-100: #FDE8DA;
   --color-yellow-500: #F56607;
 
-  --font-size-8:   8px;
-  --font-size-10: 10px;
-  --font-size-12: 12px;
-  --font-size-14: 14px;
-  --font-size-16: 16px;
-  --font-size-18: 18px;
-  --font-size-20: 20px;
-  --font-size-32: 32px;
+  --text-8:    8px;
+  --text-10:  10px;
+  --text-12:  12px;
+  --text-14:  14px;
+  --text-16:  16px;
+  --text-18:  18px;
+  --text-20:  20px;
+  --text-32:  32px;
 
   --spacing-3xs:  4px;
   --spacing-2xs:  8px;
@@ -40,8 +41,10 @@
   --spacing-2xl: 40px;
   --spacing-3xl: 80px;
 
-  --border-radius-0:       0px;
-  --border-radius-4:       4px;
-  --border-radius-8:       8px;
-  --border-radius-full: 9999px;
+  --radius-0:       0px;
+  --radius-4:       4px;
+  --radius-8:       8px;
+  --radius-full: 9999px;
+
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.06);
 }

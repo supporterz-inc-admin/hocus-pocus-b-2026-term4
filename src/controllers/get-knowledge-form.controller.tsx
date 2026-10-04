@@ -4,8 +4,8 @@ import { getOwnKnowledge } from './get-own-knowledge.js';
 /**
  * 作成・編集で共通のフォームを返す (`knowledgeId` があれば編集、なければ作成)
  */
-export async function getKnowledgeFormController(userId: string, knowledgeId?: string) {
-  if (knowledgeId == null) return <KnowledgeFormFeature title="ナレッジ作成" />;
+export async function getKnowledgeFormController(userId: string, userName: string, knowledgeId?: string) {
+  if (knowledgeId == null) return <KnowledgeFormFeature title="ナレッジ作成" userName={userName} />;
 
   const knowledge = await getOwnKnowledge(knowledgeId, userId);
 
@@ -15,6 +15,7 @@ export async function getKnowledgeFormController(userId: string, knowledgeId?: s
       knowledgeId={knowledge.knowledgeId}
       status={knowledge.status ?? 'published'}
       title="ナレッジ編集"
+      userName={userName}
     />
   );
 }

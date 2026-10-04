@@ -39,11 +39,13 @@ router.get('/knowledges/drafts', (ctx) =>
 );
 
 // MEMO: `?id=` があれば編集、なければ作成のフォームを返す
-router.get('/knowledges/form', (ctx) => ctx.html(getKnowledgeFormController(ctx.get('userId'), ctx.req.query('id'))));
+router.get('/knowledges/form', (ctx) =>
+  ctx.html(getKnowledgeFormController(ctx.get('userId'), ctx.get('userName'), ctx.req.query('id'))),
+);
 
 // MEMO: `/knowledges/form` より後に登録し、`form` が `:knowledgeId` として扱われないようにする
 router.get('/knowledges/:knowledgeId', (ctx) =>
-  ctx.html(getKnowledgeDetailController(ctx.req.param('knowledgeId'), ctx.get('userId'))),
+  ctx.html(getKnowledgeDetailController(ctx.req.param('knowledgeId'), ctx.get('userId'), ctx.get('userName'))),
 );
 
 // MEMO: Form の hidden フィールド `id` があれば更新、なければ作成として扱う
