@@ -28,9 +28,16 @@ export function KnowledgeListFeature({ userId, userName, knowledges }: Props) {
               <div class="flex items-center justify-between">
                 <p class="text-gray-600 font-bold">{knowledge.authorId}</p>
                 {knowledge.authorId === userId && (
-                  <a class="text-blue-500" href={`/knowledges/form?id=${knowledge.knowledgeId}`}>
-                    編集
-                  </a>
+                  <div class="flex items-center gap-s">
+                    <a class="text-blue-500" href={`/knowledges/form?id=${knowledge.knowledgeId}`}>
+                      編集
+                    </a>
+                    <form action={`/knowledges/${knowledge.knowledgeId}/delete`} method="post">
+                      <button class="text-red-500" type="submit">
+                        削除
+                      </button>
+                    </form>
+                  </div>
                 )}
               </div>
               <p class="mt-2xs text-gray-900 line-clamp-3 whitespace-pre-wrap">{knowledge.content}</p>

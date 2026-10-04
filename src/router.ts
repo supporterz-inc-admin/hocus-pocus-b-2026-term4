@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { createKnowledgeController } from './controllers/create-knowledge.controller.js';
+import { deleteKnowledgeController } from './controllers/delete-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
 import { getKnowledgeFormController } from './controllers/get-knowledge-form.controller.js';
 import { updateKnowledgeController } from './controllers/update-knowledge.controller.js';
@@ -43,6 +44,12 @@ router.post('/knowledges', async (ctx) => {
   } else {
     await createKnowledgeController(content, userId);
   }
+
+  return ctx.redirect('/');
+});
+
+router.post('/knowledges/:knowledgeId/delete', async (ctx) => {
+  await deleteKnowledgeController(ctx.req.param('knowledgeId'), ctx.get('userId'));
 
   return ctx.redirect('/');
 });
