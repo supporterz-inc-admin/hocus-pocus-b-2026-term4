@@ -32,7 +32,12 @@ export interface Knowledge {
   /**
    * ナレッジの公開状態
    */
-  readonly status: KnowledgeStatus;
+  readonly status?: KnowledgeStatus;
+
+  /**
+   * ナレッジの公開日時 (UNIX タイムスタンプ)
+   */
+  readonly publishedAt?: number;
 
   /**
    * ナレッジの作成日時 (UNIX タイムスタンプ)
@@ -57,7 +62,8 @@ function create(
   authorId: Knowledge['authorId'],
   status: KnowledgeStatus = 'published',
 ): Knowledge {
-  const now = Math.floor(Date.now() / 1000);
+  const now = Date.now();
+  const nowInSeconds = now / 1000;
 
   return {
     __tag: 'Knowledge',
@@ -65,8 +71,9 @@ function create(
     content,
     authorId,
     status,
-    createdAt: now,
-    updatedAt: now,
+    ...(status === 'published' ? { publishedAt: nowInSeconds } : {}),
+    createdAt: Math.floor(nowInSeconds),
+    updatedAt: Math.floor(nowInSeconds),
   };
 }
 
@@ -82,11 +89,17 @@ function update(
   content: Knowledge['content'],
   status: KnowledgeStatus = self.status ?? 'published',
 ): Knowledge {
+  const now = Date.now();
+  const nowInSeconds = now / 1000;
+
   return {
     ...self,
     content,
     status,
-    updatedAt: Math.floor(Date.now() / 1000),
+    ...(status === 'published'
+      ? { publishedAt: self.status !== 'draft' ? (self.publishedAt ?? self.createdAt) : nowInSeconds }
+      : {}),
+    updatedAt: Math.floor(nowInSeconds),
   };
 }
 
