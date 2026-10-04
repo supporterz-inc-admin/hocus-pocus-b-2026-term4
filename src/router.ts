@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { createKnowledgeController } from './controllers/create-knowledge.controller.js';
 import { deleteKnowledgeController } from './controllers/delete-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
+import { getKnowledgeDetailController } from './controllers/get-knowledge-detail.controller.js';
 import { getKnowledgeFormController } from './controllers/get-knowledge-form.controller.js';
 import { updateKnowledgeController } from './controllers/update-knowledge.controller.js';
 
@@ -31,6 +32,11 @@ router.get('/', (ctx) => {
 
 // MEMO: `?id=` があれば編集、なければ作成のフォームを返す
 router.get('/knowledges/form', (ctx) => ctx.html(getKnowledgeFormController(ctx.get('userId'), ctx.req.query('id'))));
+
+// MEMO: `/knowledges/form` より後に登録し、`form` が `:knowledgeId` として扱われないようにする
+router.get('/knowledges/:knowledgeId', (ctx) =>
+  ctx.html(getKnowledgeDetailController(ctx.req.param('knowledgeId'), ctx.get('userId'))),
+);
 
 // MEMO: Form の hidden フィールド `id` があれば更新、なければ作成として扱う
 router.post('/knowledges', async (ctx) => {
