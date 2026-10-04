@@ -1,4 +1,5 @@
 import type { Knowledge } from '../models/knowledge.model.js';
+import { KnowledgeContent } from './KnowledgeContent.js';
 import { KnowledgeOwnerActions } from './KnowledgeOwnerActions.js';
 import { Layout } from './Layout.js';
 
@@ -33,7 +34,9 @@ export function KnowledgeDetailFeature({ userId, knowledge }: Props) {
             <dd>{formatDateTime(knowledge.updatedAt)}</dd>
           </div>
         </dl>
-        <p class="mt-s text-gray-900 whitespace-pre-wrap">{knowledge.content}</p>
+        <div class="mt-s text-gray-900 whitespace-pre-wrap">
+          <KnowledgeContent content={knowledge.content} />
+        </div>
       </article>
     </Layout>
   );

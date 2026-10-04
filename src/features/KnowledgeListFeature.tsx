@@ -1,3 +1,4 @@
+import { Image } from '../models/image.model.js';
 import type { Knowledge } from '../models/knowledge.model.js';
 import { KnowledgeOwnerActions } from './KnowledgeOwnerActions.js';
 import { Layout } from './Layout.js';
@@ -48,7 +49,7 @@ export function KnowledgeListFeature({ userId, userName, knowledges, isDraftList
               </div>
               {/* MEMO: `<form>` を `<a>` で囲めないため、疑似要素でカード全体をリンクの当たり判定にする */}
               <a class="block mt-2xs after:absolute after:inset-0" href={`/knowledges/${knowledge.knowledgeId}`}>
-                <p class="text-gray-900 line-clamp-3 whitespace-pre-wrap">{knowledge.content}</p>
+                <p class="text-gray-900 line-clamp-3 whitespace-pre-wrap">{Image.toPlainText(knowledge.content)}</p>
               </a>
             </li>
           ))}

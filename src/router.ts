@@ -1,10 +1,13 @@
 import { Hono } from 'hono';
+import { bodyLimit } from 'hono/body-limit';
 import { createKnowledgeController } from './controllers/create-knowledge.controller.js';
 import { deleteKnowledgeController } from './controllers/delete-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
 import { getDraftKnowledgesController } from './controllers/get-draft-knowledges.controller.js';
+import { getImageController } from './controllers/get-image.controller.js';
 import { getKnowledgeDetailController } from './controllers/get-knowledge-detail.controller.js';
 import { getKnowledgeFormController } from './controllers/get-knowledge-form.controller.js';
+import { MAX_UPLOAD_BYTES } from './controllers/save-images.js';
 import { updateKnowledgeController } from './controllers/update-knowledge.controller.js';
 
 export interface Variables {
@@ -44,20 +47,33 @@ router.get('/knowledges/:knowledgeId', (ctx) =>
 );
 
 // MEMO: Form の hidden フィールド `id` があれば更新、なければ作成として扱う
-router.post('/knowledges', async (ctx) => {
-  const { content, id, status } = await ctx.req.parseBody();
+router.post('/knowledges', bodyLimit({ maxSize: MAX_UPLOAD_BYTES }), async (ctx) => {
+  const { content, id, status, images } = await ctx.req.parseBody({ all: true });
   if (typeof content !== 'string') return ctx.text('Bad Request', 400);
   if (status !== 'draft' && status !== 'published') return ctx.text('Bad Request', 400);
 
+  // MEMO: ファイルを選択していない場合も、空のファイルが 1 つ送られてくる
+  const imageFiles = [images].flat().filter((value): value is File => value instanceof File && value.size > 0);
   const userId = ctx.get('userId');
 
   if (typeof id === 'string') {
-    await updateKnowledgeController(id, content, userId, status);
+    await updateKnowledgeController(id, content, userId, status, imageFiles);
   } else {
-    await createKnowledgeController(content, userId, status);
+    await createKnowledgeController(content, userId, status, imageFiles);
   }
 
   return ctx.redirect(status === 'draft' ? '/knowledges/drafts' : '/');
+});
+
+router.get('/images/:fileName', async (ctx) => {
+  const { bytes, contentType } = await getImageController(ctx.req.param('fileName'));
+
+  // MEMO: ファイル名は UUID で、内容が変わることはないため、長期間キャッシュさせる
+  return ctx.body(bytes, 200, {
+    'Content-Type': contentType,
+    'X-Content-Type-Options': 'nosniff',
+    'Cache-Control': 'private, max-age=31536000, immutable',
+  });
 });
 
 router.post('/knowledges/:knowledgeId/delete', async (ctx) => {
